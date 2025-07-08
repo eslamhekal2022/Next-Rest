@@ -1,3 +1,4 @@
+import BackButton from "@/src/(components)/BackButton/page";
 import { FaStar } from "react-icons/fa";
 
 export const dynamic = "force-dynamic";
@@ -18,9 +19,8 @@ export default async function ProductDetailsPage({ params }) {
 
   return (
     <div className="max-w-7xl mx-auto p-4">
-      {/* Product Section */}
+    <BackButton/>
       <div className="grid md:grid-cols-2 gap-6">
-        {/* Left: Images */}
         <div>
           <div className="relative border rounded-2xl overflow-hidden">
             <img
@@ -56,7 +56,7 @@ export default async function ProductDetailsPage({ params }) {
 
         {/* Right: Info */}
         <div className="space-y-4">
-          <p className="text-sm text-gray-500">الفئة: {product.category}</p>
+          <p className="text-sm text-gray-500 capitalize">Category: {product.category}</p>
           <h1 className="text-3xl font-bold uppercase">{product.name}</h1>
 
           <div className="space-y-2 text-gray-700">

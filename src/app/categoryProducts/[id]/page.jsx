@@ -15,7 +15,7 @@ export default async function GetCategoriesPage({ params }) {
   const data = await getProduct(params.id);
 
   if (!data?.category) {
-    return <p className="text-center mt-10 text-red-600">لم يتم العثور على تصنيف.</p>;
+    return <p className="text-center mt-10 text-red-600">i don't found category</p>;
   }
 
   return (

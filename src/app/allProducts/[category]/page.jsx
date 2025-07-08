@@ -1,3 +1,4 @@
+import BackButton from "@/src/(components)/BackButton/page";
 import Link from "next/link";
 
 export async function generateStaticParams() {
@@ -53,10 +54,11 @@ export default async function FilteredProductsPage({ params }) {
 
   return (
     <div className="min-h-screen bg-[#fffaf0] p-6">
-      <h1 className="text-4xl font-bold text-center text-[#F9A303] mb-10">
+
+<BackButton/>
+    <h1 className="text-4xl font-bold text-center text-[#F9A303] mb-10">
         منتجات {arabicCategoryNames[category] || category}
       </h1>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
         {products.map((product) => (
           <div key={product._id} className="bg-white p-4 rounded shadow">

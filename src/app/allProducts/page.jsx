@@ -26,6 +26,7 @@ export default async function AllProducts() {
       {/* المنتجات */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
         {products.map((product) => (
+         <Link href={`productDetails/${product._id}`}>
           <div key={product._id} className="bg-white p-4 rounded shadow hover:shadow-lg transition">
             <img
               src={`${apiUrl}${product.images[0]}`}
@@ -41,6 +42,11 @@ export default async function AllProducts() {
 </p>
             ))}
           </div>
+         </Link>
+
+
+                 
+
         ))}
       </div>
     </div>

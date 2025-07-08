@@ -9,7 +9,9 @@ export const Navbar = () => {
     { path: "/about", link: "about" },
     { path: "/contact", link: "contact" },
     { path: "/allProducts", link: "allProducts" },
+    { path: "/allUsers", link: "allUsers" },
   ];
+  
 
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
