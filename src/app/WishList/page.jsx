@@ -1,12 +1,8 @@
 'use client';
-
-import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
 import { useHandleAddToCart } from '@/src/utilits/handleAddCart.js';
 import { useCart } from '@/src/context/CartContext.js';
 
 export default function WishList() {
-
   const { handleAddToCart } = useHandleAddToCart();
   const { wishList, removeWishList } = useCart();
 
