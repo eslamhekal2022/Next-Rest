@@ -1,3 +1,4 @@
+"use client"
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -20,7 +21,7 @@ export const ProductProvider = ({ children }) => {
   const getAllProducts = async (page = 1, limit = 7) => {
     try {
       const { data } = await axios.get(
-        `${process.env.REACT_APP_API_URL}/getAllProducts?page=${page}&limit=${limit}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/getAllProducts?page=${page}&limit=${limit}`,
         { headers: { token } }
       );
       if (data.success) {
@@ -39,7 +40,7 @@ export const ProductProvider = ({ children }) => {
 
   const getProductCat = async () => {
     try {
-      const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/getCategoryProduct`);
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getCategoryProduct`);
       if (data.success) {
         setproductCategory(data.data);
       }
@@ -52,7 +53,7 @@ export const ProductProvider = ({ children }) => {
 
     const getStateCat = async () => {
     try {
-      const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/stateCat`);
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/stateCat`);
       if (data.success) {
         setstateCat(data.data);
       }

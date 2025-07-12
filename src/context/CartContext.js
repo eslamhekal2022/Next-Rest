@@ -1,3 +1,4 @@
+"use client"
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -16,7 +17,7 @@ export const CartProvider = ({ children }) => {
   const addToCart = async (productId, quantity, size) => {
     try {
       const { data } = await axios.post(
-        `${process.env.REACT_APP_API_URL}/AddToCart`,
+        `${process.env.NEXT_PUBLIC_API_URL}/AddToCart`,
         { productId, quantity, size },
         {
           headers: {
@@ -36,7 +37,7 @@ export const CartProvider = ({ children }) => {
 
   const getCart = async () => {
     try {
-      const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/getCart`, {
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getCart`, {
         headers: {
           token: localStorage.getItem("token"),
         },
@@ -53,7 +54,7 @@ export const CartProvider = ({ children }) => {
 
   const removeCart = async (product) => {
     try {
-      const { data } = await axios.delete(`${process.env.REACT_APP_API_URL}/deleteProductCart/${product}`, {
+      const { data } = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/deleteProductCart/${product}`, {
         headers: { token: localStorage.getItem("token") },
       });
       if (data.success) {
@@ -67,7 +68,7 @@ export const CartProvider = ({ children }) => {
   const addToWihsList = async (productId) => {
     try {
       const { data } = await axios.post(
-        `${process.env.REACT_APP_API_URL}/addToWishlist`,
+        `${process.env.NEXT_PUBLIC_API_URL}/addToWishlist`,
         { productId },
         {
           headers: {
@@ -89,7 +90,7 @@ export const CartProvider = ({ children }) => {
   const removeWishList = async (product) => {
     try {
       const { data } = await axios.delete(
-        `${process.env.REACT_APP_API_URL}/removeWishList/${product}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/removeWishList/${product}`,
         {
           headers: { token: localStorage.getItem("token") },
         }
@@ -104,7 +105,7 @@ export const CartProvider = ({ children }) => {
 
   const getWishList = async () => {
     try {
-      const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/WishList`, {
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/WishList`, {
         headers: {
           token: localStorage.getItem("token"),
         },
@@ -122,7 +123,7 @@ export const CartProvider = ({ children }) => {
   const getAllUser = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/getUsers`);
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getUsers`);
       if (data.success) {
         setUsers(data.data);
         setcountUsers(data.count);

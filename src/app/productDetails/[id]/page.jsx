@@ -1,25 +1,51 @@
-import BackButton from "@/src/(components)/BackButton/page";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { useHandleAddToCart } from "@/src/utilits/handleAddCart.js";
 import { FaStar } from "react-icons/fa";
+import BackButton from "@/src/(components)/BackButton/page";
 
-export const dynamic = "force-dynamic";
-
-export default async function ProductDetailsPage({ params }) {
+export default function ProductDetailsPage() {
+  const { handleAddToCart } = useHandleAddToCart();
+  const params = useParams();
   const id = params.id;
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/productDetails/${id}`, {
-    cache: "no-store",
-  });
+  const [product, setProduct] = useState(null);
+  const [error, setError] = useState("");
 
-  if (!res.ok) return <p className="text-center text-red-500">حدث خطأ أثناء تحميل المنتج</p>;
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/productDetails/${id}`, {
+          cache: "no-store",
+        });
+        if (!res.ok) {
+          setError("حدث خطأ أثناء تحميل المنتج");
+          return;
+        }
 
-  const data = await res.json();
-  if (!data.success) return <p className="text-center text-red-500">لم يتم العثور على المنتج</p>;
+        const data = await res.json();
+        if (!data.success) {
+          setError("لم يتم العثور على المنتج");
+          return;
+        }
 
-  const product = data.data;
+        setProduct(data.data);
+      } catch (err) {
+        setError("فشل في تحميل البيانات");
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  if (error) return <p className="text-center text-red-500">{error}</p>;
+  if (!product) return <p className="text-center">جاري تحميل المنتج...</p>;
 
   return (
     <div className="max-w-7xl mx-auto p-4">
-    <BackButton/>
+      <BackButton />
       <div className="grid md:grid-cols-2 gap-6">
         <div>
           <div className="relative border rounded-2xl overflow-hidden">
@@ -54,7 +80,7 @@ export default async function ProductDetailsPage({ params }) {
           )}
         </div>
 
-        {/* Right: Info */}
+        {/* Info */}
         <div className="space-y-4">
           <p className="text-sm text-gray-500 capitalize">Category: {product.category}</p>
           <h1 className="text-3xl font-bold uppercase">{product.name}</h1>
@@ -76,13 +102,16 @@ export default async function ProductDetailsPage({ params }) {
             ))}
           </div>
 
-          <button className="bg-black text-white px-6 py-2 rounded-xl hover:bg-gray-800 transition">
+          <button
+            className="bg-black text-white px-6 py-2 rounded-xl hover:bg-gray-800 transition"
+            onClick={() => handleAddToCart(product)}
+          >
             Add To Cart 🛒
           </button>
         </div>
       </div>
 
-      {/* Reviews Section */}
+      {/* Reviews */}
       <div className="mt-10">
         <h2 className="text-2xl font-semibold mb-4">Reviews:</h2>
         {product.reviews.length === 0 ? (

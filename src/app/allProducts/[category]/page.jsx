@@ -1,3 +1,4 @@
+import AddToCartSection from "@/src/(components)/AddToCart/page.jsx";
 import BackButton from "@/src/(components)/BackButton/page";
 import Link from "next/link";
 
@@ -76,6 +77,7 @@ export default async function FilteredProductsPage({ params }) {
   <span className="text-orange-500 font-semibold">{size.price} EGP</span>
 </p>
               ))}
+<AddToCartSection product={product}/>
             </div>
           </div>
         ))}

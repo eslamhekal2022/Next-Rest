@@ -1,3 +1,4 @@
+"use client"
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -14,7 +15,7 @@ const [refresh, setRefresh] = useState(false)
   async function getAllUser() {
     try {
       setLoading(true)
-      const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/getUsers`,{
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getUsers`,{
         headers:{
           token:localStorage.getItem("token")
         }

@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 
 export default function UpdateRole({ params }) {
   const { id } = params;
+
   const [user, setUser] = useState({});
   const [role, setRole] = useState("");
   const router = useRouter();
