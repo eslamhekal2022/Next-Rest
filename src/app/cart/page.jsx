@@ -61,7 +61,7 @@ export default function CartPage() {
                 className="flex flex-col md:flex-row items-center gap-6 bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-lg transition duration-300"
               >
                 <div className="w-32 h-32 relative rounded-xl overflow-hidden shadow">
-                  <Image
+                  <img
                     src={
                       item.images?.[0]
                         ? `${process.env.NEXT_PUBLIC_API_URL}${item.images[0]}`
