@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"; // 🧠 ده بيمنع البيلد من محاولة prerender
+
 import { Suspense } from "react";
 import SearchComponent from "@/src/(components)/SearchComponent";
 
