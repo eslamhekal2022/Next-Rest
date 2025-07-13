@@ -21,7 +21,6 @@ export default function Navbar() {
   const reduxUser = useSelector((x) => x.user.user);
 
   const [user, setUser] = useState(null);
-  // const [searchQuery, setSearchQuery] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [loadingTarget, setLoadingTarget] = useState('');
 
@@ -55,19 +54,6 @@ export default function Navbar() {
     router.push('/login');
   };
 
-  // const handleSearchChange = (e) => {
-  //   const query = e.target.value;
-  //   setSearchQuery(query);
-  //   router.push(query.trim() ? `/search?query=${query}` : '/');
-  // };
-
-  // const handleSearchKeyDown = (e) => {
-  //   if (e.key === 'Enter') {
-  //     const query = e.target.value.trim();
-  //     router.push(query ? `/search?query=${query}` : '/');
-  //   }
-  // };
-
   const handleNavigate = (path, target) => {
     setLoadingTarget(target);
     router.push(path);
@@ -81,18 +67,6 @@ export default function Navbar() {
           <img src="/logo/El-Mister.jpg" alt="logo" className="h-10 w-10 rounded-full object-cover" />
           <h1 className="text-xl font-bold">Pizza-Place</h1>
         </Link>
-
-        {/* Desktop Search */}
-        // <div className="hidden md:block w-1/3">
-        //   <input
-        //     type="text"
-        //     placeholder="Search for products..."
-        //     value={searchQuery}
-        //     onChange={handleSearchChange}
-        //     onKeyDown={handleSearchKeyDown}
-        //     className="w-full px-4 py-2 rounded-full text-sm text-gray-800 focus:outline-none"
-        //   />
-        // </div>
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-5 text-lg">
@@ -117,23 +91,15 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu Button */}
         <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-xl">
           ☰
         </button>
-      // </div>
+      </div>
 
       {/* Mobile Dropdown */}
       {menuOpen && (
         <div className="md:hidden px-6 pb-4 bg-white text-black space-y-2">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchQuery}
-            onChange={handleSearchChange}
-            className="w-full px-4 py-2 rounded-full border text-sm"
-          />
-
           <MobileLink href="/allProducts" label="All Products" />
           <MobileLink href="/cart" label={`Cart (${countCart})`} />
           <MobileLink href="/WishList" label={`Wishlist (${countWishList})`} />
