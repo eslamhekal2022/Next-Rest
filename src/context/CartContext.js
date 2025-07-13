@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -14,20 +14,25 @@ export const CartProvider = ({ children }) => {
   const [countUsers, setcountUsers] = useState(0);
   const [Loading, setLoading] = useState(null);
 
+  const getToken = () => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("token");
+    }
+    return null;
+  };
+
   const addToCart = async (productId, quantity, size) => {
     try {
+      const token = getToken();
+      if (!token) return;
       const { data } = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/AddToCart`,
         { productId, quantity, size },
         {
-          headers: {
-            token: localStorage.getItem("token"),
-          },
+          headers: { token },
         }
       );
-      if (data.success) {
-        getCart();
-      }
+      if (data.success) getCart();
       return data;
     } catch (err) {
       console.error("🧨 Failed to add to cart:", err.response?.data || err.message);
@@ -37,12 +42,11 @@ export const CartProvider = ({ children }) => {
 
   const getCart = async () => {
     try {
+      const token = getToken();
+      if (!token) return;
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getCart`, {
-        headers: {
-          token: localStorage.getItem("token"),
-        },
+        headers: { token },
       });
-
       if (data.success) {
         setCart(data.data || []);
         setcountCart(data.count);
@@ -54,12 +58,13 @@ export const CartProvider = ({ children }) => {
 
   const removeCart = async (product) => {
     try {
-      const { data } = await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/deleteProductCart/${product}`, {
-        headers: { token: localStorage.getItem("token") },
-      });
-      if (data.success) {
-        getCart();
-      }
+      const token = getToken();
+      if (!token) return;
+      const { data } = await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}/deleteProductCart/${product}`,
+        { headers: { token } }
+      );
+      if (data.success) getCart();
     } catch (err) {
       console.error("Error removing from cart:", err.response?.data?.message || err.message);
     }
@@ -67,16 +72,13 @@ export const CartProvider = ({ children }) => {
 
   const addToWihsList = async (productId) => {
     try {
+      const token = getToken();
+      if (!token) return;
       const { data } = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/addToWishlist`,
         { productId },
-        {
-          headers: {
-            token: localStorage.getItem("token"),
-          },
-        }
+        { headers: { token } }
       );
-
       if (data.success) {
         getWishList();
         console.log("productIdWishList", productId);
@@ -89,15 +91,13 @@ export const CartProvider = ({ children }) => {
 
   const removeWishList = async (product) => {
     try {
+      const token = getToken();
+      if (!token) return;
       const { data } = await axios.delete(
         `${process.env.NEXT_PUBLIC_API_URL}/removeWishList/${product}`,
-        {
-          headers: { token: localStorage.getItem("token") },
-        }
+        { headers: { token } }
       );
-      if (data.success) {
-        getWishList();
-      }
+      if (data.success) getWishList();
     } catch (error) {
       console.error("Error removing product from wishlist:", error);
     }
@@ -105,12 +105,11 @@ export const CartProvider = ({ children }) => {
 
   const getWishList = async () => {
     try {
+      const token = getToken();
+      if (!token) return;
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/WishList`, {
-        headers: {
-          token: localStorage.getItem("token"),
-        },
+        headers: { token },
       });
-
       if (data.success) {
         setwishList(data.data || []);
         setcountWishList(data.count);

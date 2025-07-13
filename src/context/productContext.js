@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -6,20 +6,25 @@ import { toast } from "react-toastify";
 const ProductContext = createContext();
 
 export const ProductProvider = ({ children }) => {
-     const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]);
   const [productCount, setproductCount] = useState(0);
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState("all");
   const [productCategory, setproductCategory] = useState([]);
   const [TotalPages, setTotalPages] = useState(0);
   const [CurrentPage, setCurrentPage] = useState(1);
-
   const [stateCat, setstateCat] = useState([]);
 
-  const token = localStorage.getItem("token");
+  const getToken = () => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("token");
+    }
+    return null;
+  };
 
   const getAllProducts = async (page = 1, limit = 7) => {
     try {
+      const token = getToken();
       const { data } = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/getAllProducts?page=${page}&limit=${limit}`,
         { headers: { token } }
@@ -45,29 +50,27 @@ export const ProductProvider = ({ children }) => {
         setproductCategory(data.data);
       }
     } catch (error) {
-      toast.error("Error happenend when");
-      console.error("Error fetching categories:",error);
+      toast.error("Error happened when fetching product categories");
+      console.error("Error fetching categories:", error);
     }
   };
 
-
-    const getStateCat = async () => {
+  const getStateCat = async () => {
     try {
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/stateCat`);
       if (data.success) {
         setstateCat(data.data);
       }
     } catch (error) {
-      toast.error("Error happenend when");
-      console.error("Error fetching categories:",error);
+      toast.error("Error happened when fetching state categories");
+      console.error("Error fetching state categories:", error);
     }
   };
-
 
   useEffect(() => {
     getAllProducts();
     getProductCat();
-    getStateCat()
+    getStateCat();
   }, []);
 
   return (

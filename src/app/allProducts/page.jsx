@@ -1,6 +1,5 @@
-// app/all-products/page.jsx
-import AddToCartSection from "@/src/(components)/AddToCart/page.jsx";
-import Link from "next/link";
+import ClientSideProductList from "./ClientSideProductList.jsx";
+
 
 // ✅ تحسين الـ SEO
 export const metadata = {
@@ -11,72 +10,35 @@ export const metadata = {
 export default async function AllProducts() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  const res = await fetch(`${apiUrl}/getAllProducts`, {
-    cache: "no-store",
-  });
+  try {
+    const res = await fetch(`${apiUrl}/getAllProducts`,{
+  next: { revalidate: 1800 },
+});
 
-  const data = await res.json();
-  const products = data.data;
-  const categories = ["pizza", "burger", "pasta"];
+    if (!res.ok) {
+      throw new Error("فشل في تحميل المنتجات");
+    }
 
-  return (
-    <div className="min-h-screen bg-[#fffaf0] p-6">
-      {/* عنوان الصفحة */}
-      <h1 className="text-4xl font-bold text-center text-[#F9A303] mb-10">
-        Menu🍽️
-      </h1>
+    const json = await res.json();
 
-      {/* روابط التصنيفات */}
-      <div className="flex justify-center gap-4 mb-8 flex-wrap">
-        {categories.map((cat) => (
-          <Link
-            key={cat}
-            href={`/allProducts/${cat}`}
-            className="px-4 py-2 bg-white border border-gray-300 rounded-full hover:bg-[#fce3ab] text-gray-700 font-semibold transition"
-          >
-            {cat.charAt(0).toUpperCase() + cat.slice(1)}
-          </Link>
-        ))}
+    // تحقق إن البيانات فعلاً Array
+    const products = Array.isArray(json.data) ? json.data : [];
+
+    const categories = ["pizza", "burger", "pasta"];
+
+    return (
+      <ClientSideProductList
+        products={products}
+        categories={categories}
+        apiUrl={apiUrl}
+      />
+    );
+  } catch (error) {
+    console.error("حدث خطأ:", error);
+    return (
+      <div className="text-center text-red-500 mt-10">
+        فشل في تحميل قائمة المنتجات، حاول مرة أخرى لاحقًا.
       </div>
-
-      {/* عرض المنتجات */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <div
-            key={product._id}
-            className="bg-white p-4 rounded-xl shadow hover:shadow-lg transition"
-          >
-            {/* رابط لتفاصيل المنتج */}
-            <Link href={`/productDetails/${product._id}`}>
-              <img
-                src={`${apiUrl}${product.images?.[0] || "/fallback.jpg"}`}
-                alt={product.name}
-                className="w-full h-48 object-cover mb-4 rounded"
-              />
-              <h2 className="text-lg font-bold mb-2">{product.name}</h2>
-              <p className="text-sm text-gray-600 mb-2">
-                {product.description?.slice(0, 80)}...
-              </p>
-
-              {product.sizes.map((size, idx) => (
-                <p
-                  key={idx}
-                  className="text-sm flex justify-between items-center bg-gray-100 px-3 py-1 rounded mb-1"
-                >
-                  <span className="font-medium text-gray-800">
-                    {size.size.toUpperCase()}
-                  </span>
-                  <span className="text-orange-500 font-semibold">
-                    {size.price} EGP
-                  </span>
-                </p>
-              ))}
-            </Link>
-
-            <AddToCartSection product={product} />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+    );
+  }
 }

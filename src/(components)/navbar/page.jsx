@@ -1,14 +1,19 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useCart } from '@/src/context/CartContext';
 import { useUser } from '@/src/context/userContext';
 import { useSelector } from 'react-redux';
-import { MdRestaurantMenu } from 'react-icons/md';
-import { FaHeart, FaShoppingCart, FaUser, FaBox, FaSpinner } from 'react-icons/fa';
-import { usePathname } from 'next/navigation';
+import {
+  FaHeart,
+  FaShoppingCart,
+  FaUser,
+  FaBox,
+  FaSpinner,
+} from 'react-icons/fa';
+import { MdFastfood } from 'react-icons/md';
 
 export default function Navbar() {
   const { countCart, countWishList } = useCart();
@@ -20,7 +25,11 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loadingTarget, setLoadingTarget] = useState('');
 
+  const router = useRouter();
+  const pathname = usePathname();
+
   const isPrivileged = user?.role === 'admin' || user?.role === 'moderator';
+  const token = typeof window !== 'undefined' && localStorage.getItem('token');
 
   useEffect(() => {
     if (reduxUser) {
@@ -32,6 +41,12 @@ export default function Navbar() {
       }
     }
   }, [reduxUser]);
+
+  useEffect(() => {
+    if (loadingTarget) {
+      setLoadingTarget('');
+    }
+  }, [pathname]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -58,35 +73,16 @@ export default function Navbar() {
     router.push(path);
   };
 
-
-
-const router = useRouter();
-const pathname = usePathname();
-
-
-
-useEffect(() => {
-  if (loadingTarget) {
-    setLoadingTarget('');
-  }
-}, [pathname]);
-
-  const token = typeof window !== 'undefined' && localStorage.getItem('token');
-
   return (
-    <nav className="bg-[#F9A303] text-black shadow-md sticky top-0 z-50">
-      <div className="max-w-[1400px] mx-auto flex justify-between items-center px-4 py-2">
+    <nav className="bg-[#F9A303] text-black shadow-md sticky top-0 z-50 w-full">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-4 py-3">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 cursor-pointer">
-          <img
-            src="/logo/El-Mister.jpg"
-            alt="logo"
-            className="h-10 w-10 rounded-full object-cover"
-          />
+        <Link href="/" className="flex items-center gap-2">
+          <img src="/logo/El-Mister.jpg" alt="logo" className="h-10 w-10 rounded-full object-cover" />
           <h1 className="text-xl font-bold">Pizza-Place</h1>
         </Link>
 
-        {/* Search */}
+        {/* Desktop Search */}
         <div className="hidden md:block w-1/3">
           <input
             type="text"
@@ -98,130 +94,110 @@ useEffect(() => {
           />
         </div>
 
-        {/* Links */}
-        <div className="hidden md:flex items-center gap-6 text-lg relative">
+        {/* Desktop Nav */}
+        <div className="hidden md:flex items-center gap-5 text-lg">
           {token && (
             <>
-              <button className='cursor-pointer' onClick={() => handleNavigate('/allProducts', 'menu')}>
-                {loadingTarget === 'menu' ? (
-                  <FaSpinner className="animate-spin" />
-                ) : (
-                  <MdRestaurantMenu className="hover:text-white cursor-pointer" />
-                )}
-              </button>
-
-              <button onClick={() => handleNavigate('/cart', 'cart')} className="relative cursor-pointer">
-                {loadingTarget === 'cart' ? (
-                  <FaSpinner className="animate-spin" />
-                ) : (
-                  <>
-                    <FaShoppingCart />
-                    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex justify-center items-center rounded-full">
-                      {countCart}
-                    </span>
-                  </>
-                )}
-              </button>
-
-              <button onClick={() => handleNavigate('/WishList', 'wish')} className="relative cursor-pointer">
-                {loadingTarget === 'wish' ? (
-                  <FaSpinner className="animate-spin" />
-                ) : (
-                  <>
-                    <FaHeart />
-                    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex justify-center items-center rounded-full">
-                      {countWishList}
-                    </span>
-                  </>
-                )}
-              </button>
+              <IconButton onClick={() => handleNavigate('/allProducts', 'menu')} icon={<MdFastfood />} loading={loadingTarget === 'menu'} />
+              <BadgeIcon path="/cart" count={countCart} icon={<FaShoppingCart />} loading={loadingTarget === 'cart'} />
+              <BadgeIcon path="/WishList" count={countWishList} icon={<FaHeart />} loading={loadingTarget === 'wish'} />
             </>
           )}
 
-          {token && isPrivileged && (
-            <Link href="/allUsers" className="relative">
-              <FaUser />
-              <span className="cursor-pointer absolute -top-2 -right-2 bg-blue-600 text-white text-xs w-5 h-5 flex justify-center items-center rounded-full">
-                {countUsers}
-              </span>
-            </Link>
-          )}
+          {token && isPrivileged && <BadgeIcon path="/allUsers" count={countUsers} icon={<FaUser />} />}
+          {token && <IconLink path="/meOrder" icon={<FaBox />} />}
+          {token && isPrivileged && <AdminButton />}
 
-          {token && <Link href="/meOrder"><FaBox /></Link>}
-
-          {token && isPrivileged && (
-            <Link href="/adminPanel">
-              <button className="cursor-pointer bg-black text-white px-3 py-1 rounded-md text-sm hover:bg-gray-800">
-                Admin Panel
-              </button>
-            </Link>
-          )}
-
-          {token && user && (
-            <Link href={`/userDet/${user.id || user._id}`}>
-              <img
-                src={
-                  user.image
-                    ? user.image.startsWith('http')
-                      ? user.image
-                      : `${process.env.NEXT_PUBLIC_API_URL}${user.image}`
-                    : `https://ui-avatars.com/api/?name=${user?.name}&background=random&color=fff`
-                }
-                alt="User"
-                className="h-8 w-8 rounded-full border"
-              />
-            </Link>
-          )}
+          {token && user && <UserAvatar user={user} />}
 
           {token ? (
-            <button onClick={handleLogout} className=" cursor-pointertext-sm hover:text-red-600">
-              Logout
-            </button>
+            <button onClick={handleLogout} className="hover:text-red-600 text-sm">Logout</button>
           ) : (
-            <Link href="/login">
-              <button className=" cursor-pointertext-sm hover:text-blue-700">Login</button>
-            </Link>
+            <Link href="/login" className="hover:text-blue-700 text-sm">Login</Link>
           )}
         </div>
 
-        {/* Mobile Menu Icon */}
-        <button
-          className="md:hidden text-2xl cursor-pointer"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
+        {/* Mobile Menu */}
+        <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-xl">
           ☰
         </button>
       </div>
 
       {/* Mobile Dropdown */}
       {menuOpen && (
-        <div className="md:hidden px-6 pb-4 bg-white">
+        <div className="md:hidden px-6 pb-4 bg-white text-black space-y-2">
           <input
             type="text"
             placeholder="Search..."
             value={searchQuery}
             onChange={handleSearchChange}
-            className="w-full px-4 py-2 mb-3 rounded-full border text-sm"
+            className="w-full px-4 py-2 rounded-full border text-sm"
           />
 
-          <div className="flex flex-col gap-3 text-black text-base">
-            <Link href="/allProducts">All Products</Link>
-            <Link href="/cart">Cart ({countCart})</Link>
-            <Link href="/WishList">Wishlist ({countWishList})</Link>
-            {isPrivileged && <Link href="/AllUser">Users ({countUsers})</Link>}
-            {token && <Link href="/meOrder">My Orders</Link>}
-            {isPrivileged && <Link href="/adminPanel">Admin Panel</Link>}
-            {token && user && <Link href={`/userDet/${user.id || user._id}`}>Profile</Link>}
-            {token ? (
-              <button onClick={handleLogout} className="text-left text-red-600">
-                Logout
-              </button>
-            ) : (
-              <Link href="/login">Login</Link>
-            )}
-          </div>
+          <MobileLink href="/allProducts" label="All Products" />
+          <MobileLink href="/cart" label={`Cart (${countCart})`} />
+          <MobileLink href="/WishList" label={`Wishlist (${countWishList})`} />
+          {isPrivileged && <MobileLink href="/allUsers" label={`Users (${countUsers})`} />}
+          {token && <MobileLink href="/meOrder" label="My Orders" />}
+          {isPrivileged && <MobileLink href="/adminPanel" label="Admin Panel" />}
+          {token && user && <MobileLink href={`/userDet/${user._id}`} label="Profile" />}
+          {token ? (
+            <button onClick={handleLogout} className="text-left text-red-600">Logout</button>
+          ) : (
+            <MobileLink href="/login" label="Login" />
+          )}
         </div>
       )}
     </nav>
   );
+}
+
+function IconButton({ onClick, icon, loading }) {
+  return (
+    <button onClick={onClick} className="relative cursor-pointer">
+      {loading ? <FaSpinner className="animate-spin" /> : icon}
+    </button>
+  );
+}
+
+function BadgeIcon({ path, count, icon, loading }) {
+  return (
+    <Link href={path} className="relative">
+      {loading ? <FaSpinner className="animate-spin" /> : icon}
+      <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex justify-center items-center rounded-full">
+        {count}
+      </span>
+    </Link>
+  );
+}
+
+function IconLink({ path, icon }) {
+  return <Link href={path}>{icon}</Link>;
+}
+
+function AdminButton() {
+  return (
+    <Link href="/adminPanel">
+      <button className="bg-black text-white px-3 py-1 rounded-md text-sm hover:bg-gray-800">Admin Panel</button>
+    </Link>
+  );
+}
+
+function UserAvatar({ user }) {
+  const src = user.image?.startsWith('http')
+    ? user.image
+    : `${process.env.NEXT_PUBLIC_API_URL}${user.image}`;
+  return (
+    <Link href={`/userDet/${user._id}`}>
+      <img
+        src={user.image ? src : `https://ui-avatars.com/api/?name=${user.name}&background=random&color=fff`}
+        alt="User"
+        className="h-8 w-8 rounded-full border"
+      />
+    </Link>
+  );
+}
+
+function MobileLink({ href, label }) {
+  return <Link href={href} className="block hover:text-orange-500">{label}</Link>;
 }

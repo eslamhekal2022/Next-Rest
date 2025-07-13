@@ -11,21 +11,23 @@ export default function AllUsersPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchUsers = async () => {
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/getUsers`,{
-  next: { revalidate: 3600 }, 
-});
-      const data = await res.json();
-      if (data.success) {
-        setUsers(data.data);
-      }
-    } catch (err) {
-      toast.error("فشل في تحميل المستخدمين");
-    } finally {
-      setLoading(false);
+const fetchUsers = async () => {
+  try {
+    const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getUsers`, {
+      headers: {
+        token: localStorage.getItem("token"), // لو في حماية
+      },
+    });
+
+    if (data.success) {
+      setUsers(data.data);
     }
-  };
+  } catch (err) {
+    toast.error("فشل في تحميل المستخدمين");
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchUsers();
@@ -80,8 +82,13 @@ export default function AllUsersPage() {
 
               <p className="font-semibold">Name: {user.name}</p>
               <p>Email: {user.email}</p>
-              <p>Role: {user.role}</p>
-
+<p
+  className={`text-sm font-medium ${
+    user.role === 'admin' ? 'text-green-600' : 'text-gray-700'
+  }`}
+>
+  🛡️ Role: {user.role}
+</p>
               <Link
                 href={`/UpdateRole/${user._id}`}
                 className="inline-flex items-center gap-1 mt-3 text-blue-600 hover:underline"
