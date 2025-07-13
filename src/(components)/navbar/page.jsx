@@ -21,7 +21,7 @@ export default function Navbar() {
   const reduxUser = useSelector((x) => x.user.user);
 
   const [user, setUser] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  // const [searchQuery, setSearchQuery] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [loadingTarget, setLoadingTarget] = useState('');
 
@@ -55,18 +55,18 @@ export default function Navbar() {
     router.push('/login');
   };
 
-  const handleSearchChange = (e) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    router.push(query.trim() ? `/search?query=${query}` : '/');
-  };
+  // const handleSearchChange = (e) => {
+  //   const query = e.target.value;
+  //   setSearchQuery(query);
+  //   router.push(query.trim() ? `/search?query=${query}` : '/');
+  // };
 
-  const handleSearchKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      const query = e.target.value.trim();
-      router.push(query ? `/search?query=${query}` : '/');
-    }
-  };
+  // const handleSearchKeyDown = (e) => {
+  //   if (e.key === 'Enter') {
+  //     const query = e.target.value.trim();
+  //     router.push(query ? `/search?query=${query}` : '/');
+  //   }
+  // };
 
   const handleNavigate = (path, target) => {
     setLoadingTarget(target);
@@ -83,16 +83,16 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Search */}
-        <div className="hidden md:block w-1/3">
-          <input
-            type="text"
-            placeholder="Search for products..."
-            value={searchQuery}
-            onChange={handleSearchChange}
-            onKeyDown={handleSearchKeyDown}
-            className="w-full px-4 py-2 rounded-full text-sm text-gray-800 focus:outline-none"
-          />
-        </div>
+        // <div className="hidden md:block w-1/3">
+        //   <input
+        //     type="text"
+        //     placeholder="Search for products..."
+        //     value={searchQuery}
+        //     onChange={handleSearchChange}
+        //     onKeyDown={handleSearchKeyDown}
+        //     className="w-full px-4 py-2 rounded-full text-sm text-gray-800 focus:outline-none"
+        //   />
+        // </div>
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-5 text-lg">
@@ -121,7 +121,7 @@ export default function Navbar() {
         <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-xl">
           ☰
         </button>
-      </div>
+      // </div>
 
       {/* Mobile Dropdown */}
       {menuOpen && (
