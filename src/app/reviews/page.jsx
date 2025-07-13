@@ -46,7 +46,7 @@ export default async function ReviewUsers() {
                 className="bg-white shadow-lg rounded-xl p-6 border border-gray-100 transition hover:shadow-xl"
               >
                 <div className="flex flex-col items-center text-center">
-                  <Image
+                  <img
                     src={userImage}
                     alt={user?.name || "User"}
                     width={64}
