@@ -12,7 +12,9 @@ async function getProducts(category) {
 }
 
 export default async function GetFilterCatPage({ params }) {
-  const products = await getProducts(params.category);
+  const category = params?.category;
+
+  const products = await getProducts(category);
 
   return (
     <div className="p-4">
@@ -24,3 +26,4 @@ export default async function GetFilterCatPage({ params }) {
     </div>
   );
 }
+

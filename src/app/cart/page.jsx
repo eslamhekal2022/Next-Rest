@@ -75,8 +75,8 @@ export default function CartPage() {
 
                 <div className="flex-1 space-y-3">
                   <h3 className="text-xl font-semibold text-[#1f2937]">{item.name}</h3>
-                  <p className="text-gray-600 capitalize">الحجم: {item.size}</p>
-                  <p className="text-gray-800 font-medium">السعر: {item.price.toFixed(2)} جنيه</p>
+                  <p className="text-gray-600 capitalize">Size: {item.size}</p>
+                  <p className="text-gray-800 font-medium">Price: {item.price.toFixed(2)} EGP</p>
 
                   <div className="flex items-center gap-3">
                     <button
